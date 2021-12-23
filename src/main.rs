@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use anyhow::{anyhow, Result};
 use clap::Parser;
 use chrono::{Local, NaiveDate};
-use calamine::{Xlsx, Reader, open_workbook};
+use calamine::{Xlsx, Reader, open_workbook, DataType};
 
 #[derive(Debug, Parser)]
 #[clap(version, about)]
@@ -39,9 +39,37 @@ fn main() -> Result<()> {
         excel.worksheet_range(sheet_name)
         .ok_or_else(|| anyhow!("worksheet '{}' does not exist", sheet_name))??;
 
-    for row in sheet.rows() {
+    let mut rows = sheet.rows();
+
+    let header = rows.next()
+        .ok_or_else(|| anyhow!("no rows"))?;
+
+    let column_day = 7;
+    let column_month = 8;
+    let column_year = 9;
+    expect_header(header, column_day, "Day")?;
+    expect_header(header, column_month, "Month")?;
+    expect_header(header, column_year, "Year")?;
+
+    for row in rows {
         println!("row={:?}", row);
     }
 
     Ok(())
+}
+
+fn get_string(row: &[DataType], col: usize) -> Result<&str> {
+    row
+        .get(col)
+        .ok_or_else(|| anyhow!("no column of index {}", col))?
+        .get_string()
+        .ok_or_else(|| anyhow!("expected String of column {}", col))
+}
+
+fn expect_header(header: &[DataType], col: usize, text: &str) -> Result<()> {
+    if get_string(header, col)? != text {
+        Err(anyhow!("Expected header '{}' in column '{}'", text, col))
+    } else {
+        Ok(())
+    }
 }
