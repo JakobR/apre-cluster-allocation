@@ -9,3 +9,7 @@ license = "GPL-3.0-or-later"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1"
+calamine = "0.18"
+clap = { version = "3.0.0-rc.7", features = ["derive"] }
+chrono = "0.4"
