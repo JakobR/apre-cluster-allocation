@@ -2,13 +2,14 @@ use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
 use clap::Parser;
-use chrono::NaiveDate;
+use chrono::{Local, NaiveDate};
 use calamine::{Xlsx, Reader, open_workbook};
 
 #[derive(Debug, Parser)]
 #[clap(version, about)]
 struct Options {
     /// Print allocation for the given date.
+    /// Defaults to today. Format: YYYY-MM-DD
     #[clap(short, long)]
     date: Option<NaiveDate>,
 
@@ -21,7 +22,14 @@ fn main() -> Result<()> {
     let opts = Options::parse();
 
     #[cfg(debug_assertions)]
-    eprintln!("Options: {:?}", &opts);
+    dbg!(&opts);
+
+    let date =
+        opts.date
+        .unwrap_or_else(|| Local::today().naive_local());
+
+    #[cfg(debug_assertions)]
+    dbg!(date);
 
     let mut excel: Xlsx<_> = open_workbook(opts.file)?;
 
