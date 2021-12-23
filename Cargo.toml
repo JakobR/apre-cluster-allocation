@@ -1,0 +1,11 @@
+[package]
+name = "apre-cluster-allocation"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Jakob Rath <git@jakobrath.eu>" ]
+description = "Extract current node allocation from spreadsheet"
+license = "GPL-3.0-or-later"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
