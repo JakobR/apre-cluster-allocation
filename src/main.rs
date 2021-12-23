@@ -52,7 +52,11 @@ fn main() -> Result<()> {
     expect_header(header, column_year, "Year")?;
 
     for row in rows {
-        println!("row={:?}", row);
+        let year = get_number(row, column_year)?.try_into()?;
+        let month = get_number(row, column_month)?.try_into()?;
+        let day = get_number(row, column_day)?.try_into()?;
+        let row_date = NaiveDate::from_ymd(year, month, day);
+        println!("row={:?}, date={:?}", row, row_date);
     }
 
     Ok(())
@@ -71,5 +75,16 @@ fn expect_header(header: &[DataType], col: usize, text: &str) -> Result<()> {
         Err(anyhow!("Expected header '{}' in column '{}'", text, col))
     } else {
         Ok(())
+    }
+}
+
+fn get_number(row: &[DataType], col: usize) -> Result<i64> {
+    let value =
+        row.get(col)
+        .ok_or_else(|| anyhow!("no column of index {}", col))?;
+    match value {
+        &DataType::Int(x) => Ok(x),
+        &DataType::Float(x) => Ok(x as i64),
+        x => Err(anyhow!("Expected number in column '{}', but got '{}'", col, x)),
     }
 }
