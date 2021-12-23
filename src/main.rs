@@ -51,13 +51,25 @@ fn main() -> Result<()> {
     expect_header(header, column_month, "Month")?;
     expect_header(header, column_year, "Year")?;
 
+    let mut selected_row = None;
+
     for row in rows {
         let year = get_number(row, column_year)?.try_into()?;
         let month = get_number(row, column_month)?.try_into()?;
         let day = get_number(row, column_day)?.try_into()?;
         let row_date = NaiveDate::from_ymd(year, month, day);
-        println!("row={:?}, date={:?}", row, row_date);
+        if row_date == date {
+            if selected_row.is_some() {
+                return Err(anyhow!("Multiple rows match the requested date '{}':\n{:?}\n{:?}", date, selected_row.unwrap(), row));
+            }
+            selected_row = Some(row);
+        }
     }
+
+    let selected_row = selected_row
+        .ok_or_else(|| anyhow!("No row matches the requested date '{}'", date))?;
+
+    println!("row={:?}", selected_row);
 
     Ok(())
 }
