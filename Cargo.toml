@@ -10,6 +10,6 @@ license = "GPL-3.0-or-later"
 
 [dependencies]
 anyhow = "1"
-calamine = "0.18"
-clap = { version = "3.0.0-rc.7", features = ["derive"] }
+calamine = { version = "0.18", features = ["dates"] }
+clap = { version = "3", features = ["derive"] }
 chrono = "0.4"
