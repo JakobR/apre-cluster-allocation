@@ -1,6 +1,7 @@
 [package]
 name = "apre-cluster-allocation"
 version = "0.1.0"
+rust-version = "1.58"
 edition = "2021"
 authors = [ "Jakob Rath <git@jakobrath.eu>" ]
 description = "Extract current node allocation from spreadsheet"
